@@ -23,9 +23,22 @@ type strC struct {
 }
 
 type ifC struct {
+	ExprC
 	cond ExprC
 	then ExprC
 	els  ExprC
+}
+
+type lamC struct {
+	ExprC
+	args []idC
+	body ExprC
+}
+
+type appC struct {
+	ExprC
+	fun  ExprC
+	args []ExprC
 }
 
 func (num numC) init() string {
@@ -40,10 +53,64 @@ func (exp strC) init() string {
 	return exp.s
 }
 
+/*
 func (exp ifC) init() string {
 	return interp(exp.cond)
 }
 
+
+func (exp lamC) init() string {
+	return interp(exp.body)
+}
+
+func (exp appC) init() string {
+	return interp(exp.fun)
+}
+*/
+
+// values
+type Value interface {
+	val()
+}
+
+type numV struct {
+	Value
+	n int
+}
+
+type strV struct {
+	Value
+	s string
+}
+
+type boolV struct {
+	Value
+	b bool
+}
+
+type closV struct {
+	Value
+	args []idC
+	body ExprC
+	env  Env
+}
+
+type primV struct {
+	Value
+	name string
+}
+
+// environment structs
+type binding struct {
+	name string
+	val  Value
+}
+
+type Env struct {
+	bindings []binding
+}
+
+// interp
 func interp(e ExprC) string {
 	switch v := e.(type) {
 	case numC:

@@ -46,4 +46,29 @@ func TestInterp(t *testing.T) {
 			t.Fatalf("Got: %v\n", exp)
 		}
 	})
+
+	/*t.Run("lamC", func(t *testing.T) {
+	    tst := lamC{
+
+	    }
+	    exp := interp(tst)
+	    if exp != "1"{
+	        t.Fatalf("Got: %v\n", exp)
+	    }
+	})*/
+
+	/*
+		t.Run("appC", func(t *testing.T) {
+			argList := make([]ExprC, 2)
+
+			tst := appC{
+				fun:  idC{"+"},
+				args: append(argList, numC{1}, numC{2}),
+			}
+			exp := interp(tst)
+			if exp != "1" {
+				t.Fatalf("Got: %v\n", exp)
+			}
+		})
+	*/
 }
