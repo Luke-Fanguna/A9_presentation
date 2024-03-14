@@ -6,7 +6,7 @@ import (
 )
 
 type ExprC interface {
-    interp() string
+    init() string
 }
 
 type numC struct {
@@ -21,33 +21,33 @@ type strC struct {
 	s string
 }
 
-func (num numC) interp() string {
+func (num numC) init() string {
     return strconv.Itoa(num.n)
 }
 
-func (exp idC) interp() string {
+func (exp idC) init() string {
     return exp.id
 }
 
-func (exp strC) interp() string {
+func (exp strC) init() string {
     return exp.s
 }
 
-/*func (e interp string {
+func interp (e ExprC) string {
     switch v := e.(type){
     case numC:
-        return "numC"
+        return strconv.Itoa(v.n)
     case idC:
-        return "idC"
+        return v.id
     case strC:
-        return "strC"
+        return v.s
     default:
         return "unimplemented"
     }
 }
-*/
+
+
 func main() {
-	fmt.Println("Hello World")
-	fmt.Println("Semicolon")
+	fmt.Println(interp(numC{5}));
 }
 
