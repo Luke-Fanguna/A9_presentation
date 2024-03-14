@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
     "strconv"
+    //"os"
 )
 
 type ExprC interface {
@@ -46,7 +47,7 @@ func interp (e ExprC) string {
     }
 }
 
-
+// possibly add i/o with os import?
 func main() {
 	fmt.Println(interp(numC{5}));
 }

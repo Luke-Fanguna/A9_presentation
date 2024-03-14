@@ -9,17 +9,17 @@ func TestInterp(t *testing.T) {
         tst := numC{
             n:4,
         }
-        exp := tst.interp()
+        exp := interp(tst)
         if exp != "4" {
             t.Fatalf("Got: %v\n", exp)
         }
     })
 
     t.Run("idC", func(t *testing.T) {
-        ts := idC{
+        tst := idC{
             id:"hello",
         }
-        exp := ts.interp()
+        exp := interp(tst)
         if exp != "hello" {
             t.Fatalf("Got: %v\n", exp)
         }
