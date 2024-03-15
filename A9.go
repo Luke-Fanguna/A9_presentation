@@ -189,6 +189,13 @@ func primop(prim primV, a ExprC, b ExprC, env Env) Value {
 	return numV{a3 + b3}
 }
 
+// extendEnv
+func extendEnv(env Env, sym string, val Value) Env {
+	newBinding := binding{sym, val}
+	env.bindings = append(env.bindings, newBinding)
+	return env
+}
+
 // interp
 func interp(e ExprC, env Env) Value {
 	switch v := e.(type) {
