@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"strconv"
 	//"os"
 )
@@ -150,6 +151,16 @@ func serialize(val Value) string {
 	}
 }
 
+func lookup(sym string, env Env) Value {
+	for i := len(env.bindings) - 1; i >= 0; i-- {
+		if (env.bindings[i]).name == sym {
+			return env.bindings[i].val
+		}
+	}
+	log.Fatalf("GOAZO9 symbol not found :(")
+	return strV{"GOAZO9 symbol not found"}
+}
+
 // interp
 func interp(e ExprC, env Env) Value {
 	switch v := e.(type) {
@@ -157,7 +168,8 @@ func interp(e ExprC, env Env) Value {
 		return numV{v.n}
 	case idC:
 		//need to implement lookup
-		return strV{v.id}
+		return lookup(v.id, env)
+
 	case strC:
 		return strV{v.s}
 	case ifC:
