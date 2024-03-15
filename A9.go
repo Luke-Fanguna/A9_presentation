@@ -15,6 +15,10 @@ type numC struct {
 	n int
 }
 
+func (num numC) init() string {
+	return strconv.Itoa(num.n)
+}
+
 type idC struct {
 	id string
 }
@@ -37,10 +41,6 @@ type lamC struct {
 type appC struct {
 	fun  ExprC
 	args []ExprC
-}
-
-func (num numC) init() string {
-	return strconv.Itoa(num.n)
 }
 
 func (exp idC) init() string {

@@ -6,6 +6,31 @@ import (
 
 func TestInterp(t *testing.T) {
 
+	t.Run("appC", func(t *testing.T) {
+		//params of the lambda
+		var params []idC = make([]idC, 2)
+		params[0] = idC{"x"}
+		params[1] = idC{"y"}
+
+		//arguments to the appC within the lambda
+		var args []ExprC = make([]ExprC, 2)
+		args[0] = idC{"x"}
+		args[1] = idC{"y"}
+		var lam = lamC{params, appC{idC{"*"}, args}}
+
+		//overall program args
+		var args2 []ExprC = make([]ExprC, 2)
+		args[0] = numC{3}
+		args[1] = numC{4}
+
+		//putting it together
+		var prog = appC{lam, args2}
+		exp := serialize(interp(prog, baseEnv))
+		if exp != "12" {
+			t.Fatalf("Got: %v\n", exp)
+		}
+	})
+
 	t.Run("numC", func(t *testing.T) {
 		tst := numC{
 			n: 4,
@@ -92,26 +117,6 @@ func TestInterp(t *testing.T) {
 
 		exp := serialize(interp(tst, baseEnv))
 		if exp != "13" {
-			t.Fatalf("Got: %v\n", exp)
-		}
-	})
-
-	t.Run("appC", func(t *testing.T) {
-		var params []idC = make([]idC, 2)
-		params[0] = idC{"x"}
-		params[1] = idC{"y"}
-
-		var args []ExprC = make([]ExprC, 2)
-		args[0] = idC{"x"}
-		args[1] = idC{"y"}
-		var lam = lamC{params, appC{idC{"*"}, args}}
-
-		var args2 []ExprC = make([]ExprC, 2)
-		args[0] = numC{3}
-		args[1] = numC{4}
-		var prog = appC{lam, args2}
-		exp := serialize(interp(prog, baseEnv))
-		if exp != "12" {
 			t.Fatalf("Got: %v\n", exp)
 		}
 	})
