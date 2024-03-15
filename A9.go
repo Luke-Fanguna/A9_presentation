@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	//"os"
@@ -116,7 +117,7 @@ type Env struct {
 }
 
 // global var
-var bindings []binding = make([]binding, 2)
+var bindings []binding = make([]binding, 0)
 var baseEnv Env = Env{append(bindings,
 	binding{"true", boolV{true}},
 	binding{"false", boolV{false}},
@@ -280,5 +281,9 @@ func interp(e ExprC, env Env) Value {
 // possibly add i/o with os import?
 func main() {
 
-	//fmt.Println(interp(numC{5}))
+	var args []ExprC = make([]ExprC, 2)
+	args[0] = numC{2}
+	args[1] = numC{3}
+
+	fmt.Println(args[0])
 }
