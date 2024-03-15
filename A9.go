@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	//"os"
 )
@@ -23,20 +22,17 @@ type strC struct {
 }
 
 type ifC struct {
-	ExprC
 	cond ExprC
 	then ExprC
 	els  ExprC
 }
 
 type lamC struct {
-	ExprC
 	args []idC
 	body ExprC
 }
 
 type appC struct {
-	ExprC
 	fun  ExprC
 	args []ExprC
 }
@@ -53,51 +49,59 @@ func (exp strC) init() string {
 	return exp.s
 }
 
-/*
 func (exp ifC) init() string {
-	return interp(exp.cond)
+	return "1"
 }
 
-
 func (exp lamC) init() string {
-	return interp(exp.body)
+	return "1"
 }
 
 func (exp appC) init() string {
-	return interp(exp.fun)
+	return "1"
 }
-*/
 
 // values
 type Value interface {
-	val()
+	val() string
 }
 
 type numV struct {
-	Value
 	n int
 }
 
 type strV struct {
-	Value
 	s string
 }
 
 type boolV struct {
-	Value
 	b bool
 }
 
 type closV struct {
-	Value
 	args []idC
 	body ExprC
 	env  Env
 }
 
 type primV struct {
-	Value
 	name string
+}
+
+func (exp numV) val() string {
+	return "1"
+}
+func (exp boolV) val() string {
+	return "1"
+}
+func (exp strV) val() string {
+	return "1"
+}
+func (exp closV) val() string {
+	return "1"
+}
+func (exp primV) val() string {
+	return "1"
 }
 
 // environment structs
@@ -110,27 +114,52 @@ type Env struct {
 	bindings []binding
 }
 
-// interp
-func interp(e ExprC) string {
-	switch v := e.(type) {
-	case numC:
+//functions
+
+func serialize(val Value) string {
+	switch v := val.(type) {
+	case numV:
 		return strconv.Itoa(v.n)
-	case idC:
-		return v.id
-	case strC:
+	case strV:
 		return v.s
-	case ifC:
-		if interp(v.cond) == "true" {
-			return interp(v.then)
+	case boolV:
+		if v.b {
+			return "true"
 		} else {
-			return interp(v.els)
+			return "false"
 		}
+	case closV:
+		return "#<procedure>"
+	case primV:
+		return "#<primop>"
 	default:
 		return "unimplemented"
 	}
 }
 
+// interp
+func interp(e ExprC, env Env) Value {
+	switch v := e.(type) {
+	case numC:
+		return numV{v.n}
+	case idC:
+		//need to implement lookup
+		return strV{v.id}
+	case strC:
+		return strV{v.s}
+	case ifC:
+		if (interp(v.cond, env) == boolV{true}) {
+			return interp(v.then, env)
+		} else {
+			return interp(v.els, env)
+		}
+	default:
+		return strV{"unimplemented"}
+	}
+}
+
 // possibly add i/o with os import?
 func main() {
-	fmt.Println(interp(numC{5}))
+
+	//fmt.Println(interp(numC{5}))
 }
