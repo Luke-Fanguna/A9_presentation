@@ -182,11 +182,34 @@ func primop(prim primV, a ExprC, b ExprC, env Env) Value {
 		log.Fatalf("GOAZO9 primitive operation %v requires integers", prim.name)
 	}
 
+	//convert to numV
 	a3 := a2.(numV).n
 	b3 := b2.(numV).n
 
 	//going to add the other operations in a bit
-	return numV{a3 + b3}
+	switch prim.name {
+	case "+":
+		return numV{a3 + b3}
+	case "-":
+		return numV{a3 - b3}
+	case "*":
+		return numV{a3 * b3}
+	case "/":
+		return numV{a3 / b3}
+	case "<=":
+		return boolV{a3 <= b3}
+	default:
+		log.Fatalf("GOAZO9 primitive operation not found %v", prim.name)
+		return strV{"GOAZO9 primitive operation not found " + prim.name}
+	}
+}
+
+// extend env given a list of symbols and their corresponding values
+func multiExtend2(env Env, syms []string, vals []Value) Env {
+	for i := 0; i < len(syms); i++ {
+		env = extendEnv(env, syms[i], vals[i])
+	}
+	return env
 }
 
 // extendEnv
@@ -194,6 +217,23 @@ func extendEnv(env Env, sym string, val Value) Env {
 	newBinding := binding{sym, val}
 	env.bindings = append(env.bindings, newBinding)
 	return env
+}
+
+// interpret list of arguments to an appC
+func interpAppArgs(args []ExprC, env Env) []Value {
+	var interprettedArgs []Value = make([]Value, len(args))
+	for i := 0; i < len(args); i++ {
+		interprettedArgs[i] = interp(args[i], env)
+	}
+	return interprettedArgs
+}
+
+func getIdcSyms(ids []idC) []string {
+	var names []string = make([]string, len(ids))
+	for i := 0; i < len(ids); i++ {
+		names[i] = ids[i].id
+	}
+	return names
 }
 
 // interp
@@ -213,6 +253,24 @@ func interp(e ExprC, env Env) Value {
 			return interp(v.then, env)
 		} else {
 			return interp(v.els, env)
+		}
+	case appC:
+		//get the function definition
+		var fun Value = interp(v.fun, env)
+		//check if primitive or closure
+		switch fun.(type) {
+		case primV:
+			//cast
+			funPrim := fun.(primV)
+			return primop(funPrim, v.args[0], v.args[1], env)
+		case closV:
+			funClos := fun.(closV)
+			a_vals := interpAppArgs(v.args, env)
+			env2 := multiExtend2(funClos.env, getIdcSyms(funClos.args), a_vals)
+			return interp(funClos.body, env2)
+		default:
+			log.Fatalf("GOAZO9 trying to apply non function")
+			return strV{"GOAZO9 trying to apply non function"}
 		}
 	default:
 		return strV{"unimplemented"}
