@@ -5,8 +5,6 @@ import (
 )
 
 func TestInterp(t *testing.T) {
-	bindings := make([]binding, 2)
-	baseEnv := Env{append(bindings, binding{"true", boolV{true}})}
 
 	t.Run("numC", func(t *testing.T) {
 		tst := numC{

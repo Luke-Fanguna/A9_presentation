@@ -114,6 +114,19 @@ type Env struct {
 	bindings []binding
 }
 
+// global var
+var bindings []binding = make([]binding, 2)
+var baseEnv Env = Env{append(bindings,
+	binding{"true", boolV{true}},
+	binding{"false", boolV{false}},
+	binding{"+", primV{"+"}},
+	binding{"-", primV{"-"}},
+	binding{"*", primV{"*"}},
+	binding{"/", primV{"/"}},
+	binding{"<=", primV{"<="}},
+	binding{"equal?", primV{"equal?"}},
+	binding{"error", primV{"error"}})}
+
 //functions
 
 func serialize(val Value) string {
