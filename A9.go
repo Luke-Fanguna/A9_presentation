@@ -161,18 +161,47 @@ func lookup(sym string, env Env) Value {
 	return strV{"GOAZO9 symbol not found"}
 }
 
+func primop(prim primV, a ExprC, b ExprC, env Env) Value {
+	a2 := interp(a, env)
+	b2 := interp(b, env)
+	if prim.name == "equal?" {
+		return boolV{a2 == b2}
+	}
+
+	//rest of functions involve numbers so check
+	switch a2.(type) {
+	case numV:
+		//nothing
+	default:
+		log.Fatalf("GOAZO9 primitive operation %v requires integers", prim.name)
+	}
+	switch b2.(type) {
+	case numV:
+		//nothing
+	default:
+		log.Fatalf("GOAZO9 primitive operation %v requires integers", prim.name)
+	}
+
+	a3 := a2.(numV).n
+	b3 := b2.(numV).n
+
+	//going to add the other operations in a bit
+	return numV{a3 + b3}
+}
+
 // interp
 func interp(e ExprC, env Env) Value {
 	switch v := e.(type) {
 	case numC:
 		return numV{v.n}
 	case idC:
-		//need to implement lookup
 		return lookup(v.id, env)
-
 	case strC:
 		return strV{v.s}
+	case lamC:
+		return closV{v.args, v.body, env}
 	case ifC:
+		//need to implement primitive boolean operations
 		if (interp(v.cond, env) == boolV{true}) {
 			return interp(v.then, env)
 		} else {
